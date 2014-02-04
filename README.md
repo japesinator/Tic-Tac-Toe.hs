@@ -7,4 +7,5 @@ Usage
 -----
 
 `ghci ttt_v2.hs`
+
 `main`
