@@ -212,19 +212,19 @@ playThirdMove board
 fourthMoveEvenCoords :: [[Int]] -> (Int, Int) -- coordinates if both O's are orthogonal from the center
 fourthMoveEvenCoords board = head [ (x,y) | x <- [0,1,2], y <- [0,1,2], sum (board !! y) == 1, sum (transpose board !! x) == 1 ]
 
-fourthMoveOddCoords :: [[Int]] -> (Int, Int) -- coordinates for one ortho, one diagonal
-fourthMoveOddCoords board = head [ (x,y) | x <- [0,2], y <- [0,2], board !! (2 - y) !! (2 - x) == -1 ]
+fourthMoveOddCoords :: [[Int]] -> [(Int, Int)] -- coordinates for one ortho, one diagonal
+fourthMoveOddCoords board = [ (x,y) | x <- [0,2], y <- [0,2], board !! (2 - y) !! (2 - x) == -1 ]
 
 playFourthMove :: [[Int]] -> [[Int]]
 playFourthMove board
   -- If both O's are across from one another, take an ortho space
-  | sumXCoords board == 4 && head board !! 1 == 1            =  play 0 1 board
-  | sumXCoords board == 4                                    =  play 1 0 board
+  | sumXCoords board == 4 && head board !! 1 == 1                  =  play 0 1 board
+  | sumXCoords board == 4                                          =  play 1 0 board
   -- If they take adjacent orthos, ply in between
-  | sumXCoords board `mod` 2 == 0                            =  uncurry play (fourthMoveEvenCoords board) board
+  | sumXCoords board `mod` 2 == 0                                  =  uncurry play (fourthMoveEvenCoords board) board
   -- If there's an ortho and a diagonal, block the diagonal
-  | length fourthMoveOddCoords board /= 0                    =  uncurry play (fourthMoveOddCoords board) board
-  | otherwise                                                =  randomPlay board
+  | not (null (fourthMoveOddCoords board))                         =  uncurry play (head (fourthMoveOddCoords board)) board
+  | otherwise                                                      =  randomPlay board
 
 
 
