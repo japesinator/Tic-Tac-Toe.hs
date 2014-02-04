@@ -11,8 +11,8 @@ import Data.Maybe
 
 currentBoard :: [[Int]]
 currentBoard = [[0,0,0], -- We use balanced ternary to represent the board
-                 [0,0,0], -- 1 == x, -1 == o, 0 == open space
-                 [0,0,0]]
+                [0,0,0], -- 1 == x, -1 == o, 0 == open space
+                [0,0,0]]
 
 reverseBoard :: [[Int]] -> [[Int]]
 reverseBoard = map (map (* (-1)))
