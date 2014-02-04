@@ -213,7 +213,7 @@ fourthMoveEvenCoords :: [[Int]] -> (Int, Int) -- coordinates if both O's are ort
 fourthMoveEvenCoords board = head [ (x,y) | x <- [0,1,2], y <- [0,1,2], sum (board !! y) == 1, sum (transpose board !! x) == 1 ]
 
 fourthMoveOddCoords :: [[Int]] -> (Int, Int) -- coordinates for one ortho, one diagonal
-fourthMoveOddCoords board = head [ (x,y) | x <- [0,2], y <- [0,2], board !! (2 - y) !! (2 - x) == 1 ]
+fourthMoveOddCoords board = head [ (x,y) | x <- [0,2], y <- [0,2], board !! (2 - y) !! (2 - x) == -1 ]
 
 playFourthMove :: [[Int]] -> [[Int]]
 playFourthMove board
