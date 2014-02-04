@@ -218,12 +218,13 @@ fourthMoveOddCoords board = head [ (x,y) | x <- [0,2], y <- [0,2], board !! (2 -
 playFourthMove :: [[Int]] -> [[Int]]
 playFourthMove board
   -- If both O's are across from one another, take an ortho space
-  | sumXCoords board == 4 && head board !! 1 == 1  =  play 0 1 board
-  | sumXCoords board == 4                          =  play 1 0 board
+  | sumXCoords board == 4 && head board !! 1 == 1            =  play 0 1 board
+  | sumXCoords board == 4                                    =  play 1 0 board
   -- If they take adjacent orthos, ply in between
-  | sumXCoords board `mod` 2 == 0                  =  uncurry play (fourthMoveEvenCoords board) board
+  | sumXCoords board `mod` 2 == 0                            =  uncurry play (fourthMoveEvenCoords board) board
   -- If there's an ortho and a diagonal, block the diagonal
-  | otherwise                                      =  uncurry play (fourthMoveOddCoords board) board
+  | length fourthMoveOddCoords board /= 0                    =  uncurry play (fourthMoveOddCoords board) board
+  | otherwise                                                =  randomPlay board
 
 
 
