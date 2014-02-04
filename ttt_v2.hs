@@ -4,7 +4,6 @@
 --    [[[
 
 import Data.List
-import Data.Maybe
 
 --      Stuff about the whole board
 --      (((
@@ -44,8 +43,8 @@ numSquaresPlayed board = length (filter (/= 0) (concat board))
 getOCoords :: [[Int]] -> (Int, Int) -- where's the first space with an O?
 getOCoords board = head [ (x, y) | x <- [0,1,2], y <- [0,1,2], board !! y !! x == -1 ]
 
-sumXCoords :: [[Int]] -> Int -- what's the sum of all the x coordinates?
-sumXCoords board = sum (map (uncurry (+)) [ (x, y) | x <- [0,1,2], y <- [0,1,2], board !! y !! x == 1 ])
+sumOCoords :: [[Int]] -> Int -- what's the sum of all the o coordinates?
+sumOCoords board = sum (map (uncurry (+)) [ (x, y) | x <- [0,1,2], y <- [0,1,2], board !! y !! x == (-1) ])
 
 --      )))
 --    ]]]
@@ -218,10 +217,10 @@ fourthMoveOddCoords board = [ (x,y) | x <- [0,2], y <- [0,2], board !! (2 - y) !
 playFourthMove :: [[Int]] -> [[Int]]
 playFourthMove board
   -- If both O's are across from one another, take an ortho space
-  | sumXCoords board == 4 && head board !! 1 == 1                  =  play 0 1 board
-  | sumXCoords board == 4                                          =  play 1 0 board
+  | sumOCoords board == 4 && head board !! 1 == 1                  =  play 0 1 board
+  | sumOCoords board == 4                                          =  play 1 0 board
   -- If they take adjacent orthos, ply in between
-  | sumXCoords board `mod` 2 == 0                                  =  uncurry play (fourthMoveEvenCoords board) board
+  | sumOCoords board `mod` 2 == 0                                  =  uncurry play (fourthMoveEvenCoords board) board
   -- If there's an ortho and a diagonal, block the diagonal
   | not (null (fourthMoveOddCoords board))                         =  uncurry play (head (fourthMoveOddCoords board)) board
   | otherwise                                                      =  randomPlay board
@@ -250,11 +249,11 @@ makeMove board
   | canWin board              = playWin board
   | opponentCanWin board      = blockWin board
   | canForceWin board         = forceWin board
-  | opponentCanForceWin board = blockForceWin board
   | firstMove board           = playFirstMove board
   | secondMove board          = playSecondMove board
   | thirdMove board           = playThirdMove board
   | fourthMove board          = playFourthMove board
+  | opponentCanForceWin board = blockForceWin board
   | otherwise                 = randomPlay board
 
 -- Print things nicely
@@ -289,21 +288,16 @@ declareWin board = do
   putStrLn "X wins!"
   prettifyBoard board
 
-isOver :: [[Int]] -> Maybe ([[Int]] -> IO ())
-isOver board
-  | isWin board = Just declareWin
-  | isTie board = Just declareTie
-  | otherwise   = Nothing
-
 -- }}}
 -- Functions for actually playing the game against a person
 -- {{{
 
 changeTurn :: [[Int]] -> Int -> IO ()
 changeTurn board turnVal
-  | isNothing (isOver board)  =  fromJust (isOver board) board
-  | turnVal == 1              =  ourTurn board
-  | otherwise                 =  opponentTurn board
+  | isWin board   =  declareWin board
+  | isTie board   =  declareTie board
+  | turnVal == 1  =  ourTurn board
+  | otherwise     =  opponentTurn board
 
 opponentTurn :: [[Int]] -> IO ()
 opponentTurn board = do
