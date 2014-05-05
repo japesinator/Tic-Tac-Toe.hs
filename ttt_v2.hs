@@ -68,9 +68,7 @@ opponentPlay x y board = replaceInList (replaceInList (-1) x (board !! y)) y boa
 --    [[[
 
 canWin ::  [[Int]] -> Bool
-canWin board
-  | linesWith 2 board > 0 = True
-  | otherwise             = False
+canWin board = linesWith 2 board > 0
 
 opponentCanWin ::  [[Int]] -> Bool
 opponentCanWin board = canWin (reverseBoard board)
@@ -80,9 +78,7 @@ opponentCanWin board = canWin (reverseBoard board)
 --    [[[
 
 canForceWin :: [[Int]] -> Bool
-canForceWin board
-  | not (null [ (x,y) | x <- [0,1,2], y <- [0,1,2], linesWith 2 (play x y board) > 1 ]) = True
-  | otherwise                                                                           = False
+canForceWin board = not (null [ (x,y) | x <- [0,1,2], y <- [0,1,2], linesWith 2 (play x y board) > 1 ])
 
 opponentCanForceWin :: [[Int]] -> Bool
 opponentCanForceWin board = canForceWin(reverseBoard board)
@@ -92,36 +88,28 @@ opponentCanForceWin board = canForceWin(reverseBoard board)
 --    [[[
 
 firstMove :: [[Int]] -> Bool
-firstMove board
-  | numSquaresPlayed board == 0  =  True
-  | otherwise                    =  False
+firstMove board = numSquaresPlayed board == 0
 
 --    ]]]
 --    It's the second move
 --    [[[
 
 secondMove :: [[Int]] -> Bool
-secondMove board
-  | numSquaresPlayed board == 1  =  True
-  | otherwise                    =  False
+secondMove board = numSquaresPlayed board == 1
 
 --    ]]]
 --    It's the third move
 --    [[[
 
 thirdMove :: [[Int]] -> Bool
-thirdMove board
-  | numSquaresPlayed board == 2  =  True
-  | otherwise                    =  False
+thirdMove board = numSquaresPlayed board == 2
 
 --    ]]]
 --    It's the fourth move
 --    [[[
 
 fourthMove :: [[Int]] -> Bool
-fourthMove board
-  | numSquaresPlayed board == 3  =  True
-  | otherwise                    =  False
+fourthMove board = numSquaresPlayed board == 3
 
 --    ]]]
 --    It's a tie
