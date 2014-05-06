@@ -71,7 +71,7 @@ canWin ::  [[Int]] -> Bool
 canWin board = linesWith 2 board > 0
 
 opponentCanWin ::  [[Int]] -> Bool
-opponentCanWin board = canWin (reverseBoard board)
+opponentCanWin = canWin . reverseBoard
 
 --    ]]]
 --    Forcing a win
@@ -81,35 +81,14 @@ canForceWin :: [[Int]] -> Bool
 canForceWin board = not (null [ (x,y) | x <- [0,1,2], y <- [0,1,2], linesWith 2 (play x y board) > 1 ])
 
 opponentCanForceWin :: [[Int]] -> Bool
-opponentCanForceWin board = canForceWin(reverseBoard board)
+opponentCanForceWin = canForceWin . reverseBoard
 
 --    ]]]
---    It's the first move
+--    It's the nth move
 --    [[[
 
-firstMove :: [[Int]] -> Bool
-firstMove board = numSquaresPlayed board == 0
-
---    ]]]
---    It's the second move
---    [[[
-
-secondMove :: [[Int]] -> Bool
-secondMove board = numSquaresPlayed board == 1
-
---    ]]]
---    It's the third move
---    [[[
-
-thirdMove :: [[Int]] -> Bool
-thirdMove board = numSquaresPlayed board == 2
-
---    ]]]
---    It's the fourth move
---    [[[
-
-fourthMove :: [[Int]] -> Bool
-fourthMove board = numSquaresPlayed board == 3
+nthMove :: Int -> [[Int]] -> Bool
+nthMove n = (==) n . numSquaresPlayed
 
 --    ]]]
 --    It's a tie
@@ -237,16 +216,16 @@ makeMove board
   | canWin board              = playWin board
   | opponentCanWin board      = blockWin board
   | canForceWin board         = forceWin board
-  | firstMove board           = playFirstMove board
-  | secondMove board          = playSecondMove board
-  | thirdMove board           = playThirdMove board
-  | fourthMove board          = playFourthMove board
+  | nthMove 0 board           = playFirstMove board
+  | nthMove 1 board           = playSecondMove board
+  | nthMove 2 board           = playThirdMove board
+  | nthMove 3 board           = playFourthMove board
   | opponentCanForceWin board = blockForceWin board
   | otherwise                 = randomPlay board
 
 -- Print things nicely
 --
--- first we convert the board to X's and O's, and then we print it
+-- First we convert the board to X's and O's, and then we print it
 --
 -- {{{
 
@@ -296,7 +275,7 @@ opponentTurn board = do
   yCoord <- getLine
   if isPlayed (read xCoord) (read yCoord) board
   then do
-    putStrLn "There's already a peice there"
+    putStrLn "There's already a piece there"
     opponentTurn board
   else
     changeTurn (opponentPlay (read xCoord) (read yCoord) board) 1
@@ -315,7 +294,7 @@ initializeGame board = do
       ourTurn board
 
 -- }}}
--- now just start the game on a blank board
+-- Now just start the game on a blank board
 
 main :: IO()
 main = initializeGame currentBoard
